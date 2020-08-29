@@ -9,7 +9,7 @@ Ticker driving code.
 ```bash
 $ git clone https://github.com/v2tokens/ticker && cd ticker
 $ python3 -m venv .venv && source .venv/bin/activate
-$ make
+$ make install
 ```
 
 ## run it
@@ -17,6 +17,5 @@ $ make
 > **Important: the script must be run as root**
 
 ```bash
-$ source .venv/bin/activate
-$ make server
+$ make serve
 ```

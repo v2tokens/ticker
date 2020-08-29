@@ -1,11 +1,7 @@
 URL     := https://github.com/hzeller/rpi-rgb-led-matrix
 CLONED  := rpi-rgb-led-matrix
-DEPS    := python3-dev python3-pillow
-MATRIX  := rpi-rgb-led-matrix
-PYFILES := base.py tipper.py
+DEPS    := python3-dev
 
-
-default: matrix
 
 deps:
 	@sudo apt-get update && sudo apt-get install $(DEPS) -y
@@ -18,12 +14,11 @@ build:
 	make build-python PYTHON=/usr/bin/python3 && \
 	sudo make install-python PYTHON=/usr/bin/python3
 
-matrix: build
-
-format:
-	@black $(PYFILES)
+install: build
+	@python3 -m venv .venv && \
+	.venv/bin/pip install -r requirements.txt
 
 server:
 	@.venv/bin/python3 app.py
 
-.PHONY: deps clone build
+.PHONY: deps clone build install server
