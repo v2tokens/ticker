@@ -9,6 +9,7 @@ from flask import Flask, jsonify
 app = Flask(__name__)
 
 anim_proc = None
+goal_proc = None
 
 ROOT_PATH = Path(".").absolute()
 UTILS_PATH = Path("rpi-rgb-led-matrix/utils").absolute()
@@ -43,7 +44,7 @@ def run_animation():
 
 def run_goal_msg():
     chdir(UTILS_PATH)
-    cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} {GOAL_IMG}")
+    cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} -t 20 {GOAL_IMG}")
     process = Popen(cmd, preexec_fn=setsid)
     chdir(ROOT_PATH)
     return process
@@ -52,17 +53,31 @@ def run_goal_msg():
 @app.route("/")
 def home():
     global anim_proc
+    global goal_proc
 
-    kill_process(anim_proc)
+    # Note(decentral1se): Return early if we're already showing the message 
+    if goal_proc and goal_proc.poll() is None:
+        return jsonify(success=True)
+
+    if anim_proc:
+        kill_process(anim_proc)
 
     goal_proc = run_goal_msg()
-    goal_proc.wait()
 
+    # Note(decentral1se): opportunistically re-run the animations which take
+    # much longer to load so as to arrange them to show in a timely fashion
     anim_proc = run_animation()
 
     return jsonify(success=True)
 
 
 if __name__ == "__main__":
-    anim_proc = run_animation()
-    app.run(debug=False, host="0.0.0.0")
+    # anim_proc = run_animation()
+
+    try:
+        app.run(debug=False, host="0.0.0.0")
+    finally:
+        if anim_proc:
+            kill_process(anim_proc)
+        if goal_proc:
+            kill_process(goal_proc)
