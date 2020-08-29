@@ -22,6 +22,6 @@ server:
 	@.venv/bin/python3 app.py
 
 gifs:
-	@mv gifs/* $(CLONED)/utils/
+	@cp gifs/* $(CLONED)/utils/
 
 .PHONY: deps clone build install server gifs
