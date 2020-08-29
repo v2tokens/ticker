@@ -24,6 +24,6 @@ format:
 	@black $(PYFILES)
 
 server:
-	@python3 app.py
+	@.venv/bin/python3 app.py
 
 .PHONY: deps clone build
