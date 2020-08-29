@@ -14,7 +14,11 @@ ROOT_PATH = Path(".").absolute()
 UTILS_PATH = Path("rpi-rgb-led-matrix/utils").absolute()
 
 LED_CMD = f"sudo {UTILS_PATH}/led-image-viewer"
-LED_IMG = f"{UTILS_PATH}/tipper.gif"
+LED_IMGS = [
+    f"{UTILS_PATH}/bongacams_scroller_1.gif",
+    f"{UTILS_PATH}/bongacams_scroller_2.gif",
+    f"{UTILS_PATH}/chaturbate_01.gif",
+]
 LED_ARGS = [
     "--led-chain=8",
     "--led-rows=32",
@@ -22,7 +26,7 @@ LED_ARGS = [
     "--led-gpio-mapping=adafruit-hat",
 ]
 
-GOAL_IMG = f"{UTILS_PATH}/bonga.gif"
+GOAL_IMG = f"{UTILS_PATH}/Goal_reached.gif"
 
 
 def kill_process(process):
@@ -31,7 +35,7 @@ def kill_process(process):
 
 def run_animation():
     chdir(UTILS_PATH)
-    cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} {LED_IMG}")
+    cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} -f -s {' '.join(LED_IMGS)}")
     process = Popen(cmd, preexec_fn=setsid)
     chdir(ROOT_PATH)
     return process
@@ -39,7 +43,7 @@ def run_animation():
 
 def run_goal_msg():
     chdir(UTILS_PATH)
-    cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} -t 3 {GOAL_IMG}")
+    cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} {GOAL_IMG}")
     process = Popen(cmd, preexec_fn=setsid)
     chdir(ROOT_PATH)
     return process
