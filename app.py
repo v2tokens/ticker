@@ -22,9 +22,6 @@ LED_ARGS = [
 
 GOAL_IMG = f"{UTILS_PATH}/TODO"
 
-anim_proc = None
-goal_proc = None
-
 
 def kill_process(process):
     killpg(getpgid(process.pid), SIGTERM)
@@ -33,13 +30,13 @@ def kill_process(process):
 def run_animation():
     chdir(UTILS_PATH)
     cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} {LED_IMG}")
-    anim_proc = Popen(cmd, preexec_fn=setsid)  # noqa
+    return Popen(cmd, preexec_fn=setsid)  # noqa
 
 
 def run_goal_msg():
     chdir(UTILS_PATH)
     cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} {GOAL_IMG}")
-    goal_proc = Popen(cmd, preexec_fn=setsid)  # noqa
+    return Popen(cmd, preexec_fn=setsid)  # noqa
 
 
 @app.route("/")
@@ -48,7 +45,7 @@ def home():
 
 
 if __name__ == "__main__":
-    run_animation()
+    process = run_animation()
     sleep(5)
-    kill_process(anim_proc)
+    kill_process(process)
     # app.run(debug=True, host="0.0.0.0")
