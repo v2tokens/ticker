@@ -2,12 +2,14 @@ from os import chdir, getpgid, killpg, setsid
 from pathlib import Path
 from shlex import split
 from signal import SIGTERM
-from subprocess import PIPE, Popen
+from subprocess import Popen
 from time import sleep
 
 from flask import Flask
 
 app = Flask(__name__)
+
+anim_proc = None
 
 UTILS_PATH = Path("rpi-rgb-led-matrix/utils").absolute()
 
@@ -30,22 +32,20 @@ def kill_process(process):
 def run_animation():
     chdir(UTILS_PATH)
     cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} {LED_IMG}")
-    return Popen(cmd, preexec_fn=setsid)  # noqa
+    return Popen(cmd, preexec_fn=setsid)
 
 
 def run_goal_msg():
     chdir(UTILS_PATH)
     cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} {GOAL_IMG}")
-    return Popen(cmd, preexec_fn=setsid)  # noqa
+    return Popen(cmd, preexec_fn=setsid)
 
 
 @app.route("/")
 def home():
-    pass
+    kill_process(anim_proc)
 
 
 if __name__ == "__main__":
-    process = run_animation()
-    sleep(5)
-    kill_process(process)
-    # app.run(debug=True, host="0.0.0.0")
+    anim_proc = run_animation()
+    app.run(debug=True, host="0.0.0.0")
