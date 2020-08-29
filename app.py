@@ -1,8 +1,9 @@
-from multiprocessing import Process
-from os import chdir
+from os import chdir, kill, setsid, getpgid, killpg
+from signal import SIGKILL, SIGTERM
 from pathlib import Path
 from shlex import split
-from subprocess import run
+from subprocess import Popen, PIPE
+from time import sleep
 
 from flask import Flask
 
@@ -10,30 +11,30 @@ app = Flask(__name__)
 
 UTILS_PATH = Path("rpi-rgb-led-matrix/utils").absolute()
 
-LED_CMD = f"{UTILS_PATH}/led-image-viewer"
-LED_IMG = f"{UTILS_PATH}/chaturbate.ppm"
+LED_CMD = f"sudo {UTILS_PATH}/led-image-viewer"
+LED_IMG = f"{UTILS_PATH}/tipper.gif"
 LED_ARGS = [
     "--led-chain=8",
     "--led-rows=32",
     "--led-cols=32",
-    "--led-parallel=1",
     "--led-gpio-mapping=adafruit-hat",
-    "-f",
 ]
 
 
 def run_animation():
     chdir(UTILS_PATH)
-    cmd = f"{LED_CMD} {" ".join(LED_ARGS)} {LED_IMG}"
-    run(split(cmd))
+    cmd = f"{LED_CMD} {' '.join(LED_ARGS)} {LED_IMG}"
+    result = Popen(split(cmd), stdout=PIPE, stderr=PIPE, preexec_fn=setsid) 
+    sleep(5)
+    killpg(getpgid(result.pid), SIGTERM)
 
 
 def run_goal_msg():
     pass
 
 
-animations_process = Process(target=run_animation)
-goal_message_process = Process(target=run_goal_msg)
+animations_process = None 
+goal_message_process = None 
 
 
 @app.route("/")
@@ -42,5 +43,5 @@ def home():
 
 
 if __name__ == "__main__":
-    animations_process.start()
+    run_animation()
     # app.run(debug=True, host="0.0.0.0")
