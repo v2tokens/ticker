@@ -5,7 +5,7 @@ MATRIX  := rpi-rgb-led-matrix
 PYFILES := base.py tipper.py
 
 
-default: matrix 
+default: matrix
 
 deps:
 	@sudo apt-get update && sudo apt-get install $(DEPS) -y
@@ -23,4 +23,7 @@ matrix: build
 format:
 	@black $(PYFILES)
 
-.PHONY: deps clone build 
+server:
+	@python3 app.py
+
+.PHONY: deps clone build
