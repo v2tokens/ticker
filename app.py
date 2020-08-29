@@ -13,6 +13,7 @@ goal_proc = None
 
 ROOT_PATH = Path(".").absolute()
 UTILS_PATH = Path("rpi-rgb-led-matrix/utils").absolute()
+GIFS_PATH = Path("gifs").absolute()
 
 LED_CMD = f"{UTILS_PATH}/led-image-viewer"
 LED_ARGS = " ".join(
@@ -30,14 +31,14 @@ LED_ARGS = " ".join(
 
 ANIM_IMGS = " ".join(
     [
-        f"{UTILS_PATH}/bongacams_scroller_1.gif",
-        f"{UTILS_PATH}/bongacams_scroller_2.gif",
-        f"{UTILS_PATH}/chaturbate_01.gif",
+        f"{GIFS_PATH}/bongacams_scroller_1.gif",
+        f"{GIFS_PATH}/bongacams_scroller_2.gif",
+        f"{GIFS_PATH}/chaturbate_01.gif",
     ]
 )
 ANIM_CMD = split(f"{LED_CMD} {LED_ARGS} -f -s {ANIM_IMGS}")
 
-GOAL_IMG = f"{UTILS_PATH}/Goal_reached.gif"
+GOAL_IMG = f"{GIFS_PATH}/Goal_reached.gif"
 GOAL_CMD = split(f"{LED_CMD} {LED_ARGS} -t 20 {GOAL_IMG}")
 
 

@@ -17,5 +17,5 @@ $ make install
 > **Important: the script must be run as root**
 
 ```bash
-$ make serve
+$ make
 ```
