@@ -3,7 +3,6 @@ from pathlib import Path
 from shlex import split
 from signal import SIGTERM
 from subprocess import Popen
-from time import sleep
 
 from flask import Flask, jsonify
 
