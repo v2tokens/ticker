@@ -5,12 +5,13 @@ from signal import SIGTERM
 from subprocess import Popen
 from time import sleep
 
-from flask import Flask
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 
 anim_proc = None
 
+ROOT_PATH = Path(".").absolute()
 UTILS_PATH = Path("rpi-rgb-led-matrix/utils").absolute()
 
 LED_CMD = f"sudo {UTILS_PATH}/led-image-viewer"
@@ -22,7 +23,7 @@ LED_ARGS = [
     "--led-gpio-mapping=adafruit-hat",
 ]
 
-GOAL_IMG = f"{UTILS_PATH}/TODO"
+GOAL_IMG = f"{UTILS_PATH}/bonga.gif"
 
 
 def kill_process(process):
@@ -32,20 +33,33 @@ def kill_process(process):
 def run_animation():
     chdir(UTILS_PATH)
     cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} {LED_IMG}")
-    return Popen(cmd, preexec_fn=setsid)
+    process = Popen(cmd, preexec_fn=setsid)
+    chdir(ROOT_PATH)
+    return process
 
 
 def run_goal_msg():
     chdir(UTILS_PATH)
-    cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} {GOAL_IMG}")
-    return Popen(cmd, preexec_fn=setsid)
+    cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} -t 3 {GOAL_IMG}")
+    process = Popen(cmd, preexec_fn=setsid)
+    chdir(ROOT_PATH)
+    return process
 
 
 @app.route("/")
 def home():
+    global anim_proc
+
     kill_process(anim_proc)
+
+    goal_proc = run_goal_msg()
+    goal_proc.wait()
+
+    anim_proc = run_animation()
+
+    return jsonify(success=True)
 
 
 if __name__ == "__main__":
     anim_proc = run_animation()
-    app.run(debug=True, host="0.0.0.0")
+    app.run(debug=False, host="0.0.0.0")
