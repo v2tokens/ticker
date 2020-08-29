@@ -1,8 +1,8 @@
-from os import chdir, kill, setsid, getpgid, killpg
-from signal import SIGKILL, SIGTERM
+from os import chdir, getpgid, killpg, setsid
 from pathlib import Path
 from shlex import split
-from subprocess import Popen, PIPE
+from signal import SIGTERM
+from subprocess import PIPE, Popen
 from time import sleep
 
 from flask import Flask
@@ -20,21 +20,26 @@ LED_ARGS = [
     "--led-gpio-mapping=adafruit-hat",
 ]
 
+GOAL_IMG = f"{UTILS_PATH}/TODO"
+
+anim_proc = None
+goal_proc = None
+
+
+def kill_process(process):
+    killpg(getpgid(process.pid), SIGTERM)
+
 
 def run_animation():
     chdir(UTILS_PATH)
-    cmd = f"{LED_CMD} {' '.join(LED_ARGS)} {LED_IMG}"
-    result = Popen(split(cmd), stdout=PIPE, stderr=PIPE, preexec_fn=setsid) 
-    sleep(5)
-    killpg(getpgid(result.pid), SIGTERM)
+    cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} {LED_IMG}")
+    anim_proc = Popen(cmd, preexec_fn=setsid)  # noqa
 
 
 def run_goal_msg():
-    pass
-
-
-animations_process = None 
-goal_message_process = None 
+    chdir(UTILS_PATH)
+    cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} {GOAL_IMG}")
+    goal_proc = Popen(cmd, preexec_fn=setsid)  # noqa
 
 
 @app.route("/")
@@ -44,4 +49,6 @@ def home():
 
 if __name__ == "__main__":
     run_animation()
+    sleep(5)
+    kill_process(anim_proc)
     # app.run(debug=True, host="0.0.0.0")
