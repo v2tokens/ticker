@@ -15,36 +15,34 @@ ROOT_PATH = Path(".").absolute()
 UTILS_PATH = Path("rpi-rgb-led-matrix/utils").absolute()
 
 LED_CMD = f"sudo {UTILS_PATH}/led-image-viewer"
-LED_IMGS = [
-    f"{UTILS_PATH}/bongacams_scroller_1.gif",
-    f"{UTILS_PATH}/bongacams_scroller_2.gif",
-    f"{UTILS_PATH}/chaturbate_01.gif",
-]
-LED_ARGS = [
-    "--led-chain=8",
-    "--led-rows=32",
-    "--led-cols=32",
-    "--led-gpio-mapping=adafruit-hat",
-]
+LED_ARGS = " ".join(
+    [
+        "--led-chain=8",
+        "--led-rows=32",
+        "--led-cols=32",
+        "--led-gpio-mapping=adafruit-hat",
+    ]
+)
+
+ANIM_IMGS = " ".join(
+    [
+        f"{UTILS_PATH}/bongacams_scroller_1.gif",
+        f"{UTILS_PATH}/bongacams_scroller_2.gif",
+        f"{UTILS_PATH}/chaturbate_01.gif",
+    ]
+)
+ANIM_CMD = split(f"{LED_CMD} {LED_ARGS} -f -s {' '.join(ANIM_IMGS)}")
 
 GOAL_IMG = f"{UTILS_PATH}/Goal_reached.gif"
+GOAL_CMD = split(f"{LED_CMD} {LED_ARGS} -t 20 {GOAL_IMG}")
 
 
 def kill_process(process):
     killpg(getpgid(process.pid), SIGTERM)
 
 
-def run_animation():
+def run_led(cmd):
     chdir(UTILS_PATH)
-    cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} -f -s {' '.join(LED_IMGS)}")
-    process = Popen(cmd, preexec_fn=setsid)
-    chdir(ROOT_PATH)
-    return process
-
-
-def run_goal_msg():
-    chdir(UTILS_PATH)
-    cmd = split(f"{LED_CMD} {' '.join(LED_ARGS)} -t 20 {GOAL_IMG}")
     process = Popen(cmd, preexec_fn=setsid)
     chdir(ROOT_PATH)
     return process
@@ -55,24 +53,24 @@ def home():
     global anim_proc
     global goal_proc
 
-    # Note(decentral1se): Return early if we're already showing the message 
+    # Note(decentral1se): Return early if we're already showing the message
     if goal_proc and goal_proc.poll() is None:
         return jsonify(success=True)
 
     if anim_proc:
         kill_process(anim_proc)
 
-    goal_proc = run_goal_msg()
+    goal_proc = run_led(GOAL_CMD)
 
     # Note(decentral1se): opportunistically re-run the animations which take
     # much longer to load so as to arrange them to show in a timely fashion
-    anim_proc = run_animation()
+    anim_proc = run_led(ANIM_CMD)
 
     return jsonify(success=True)
 
 
 if __name__ == "__main__":
-    # anim_proc = run_animation()
+    anim_proc = run_led(ANIM_CMD)
 
     try:
         app.run(debug=False, host="0.0.0.0")
