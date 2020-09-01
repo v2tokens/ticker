@@ -38,7 +38,7 @@ ANIM_IMGS = " ".join(
 ANIM_CMD = split(f"{LED_CMD} {LED_ARGS} -f -s {ANIM_IMGS}")
 
 
-GOAL_IMG = "../../Goal_reached.gif"
+GOAL_IMG = "../../gifs/Goal_reached.gif"
 GOAL_CMD = split(f"{LED_CMD} {LED_ARGS} -t 20 {GOAL_IMG}")
 
 
