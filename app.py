@@ -25,6 +25,7 @@ LED_ARGS = " ".join(
         "--led-brightness=70",
         "--led-pwm-bits=5",
         "--led-no-hardware-pulse",
+        "--led-slowdown-gpio=3",
     ]
 )
 
