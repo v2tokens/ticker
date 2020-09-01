@@ -53,6 +53,11 @@ def run_led(cmd):
     return process
 
 
+@app.route("/ok")
+def isup():
+    return jsonify(success=True)
+
+
 @app.route("/")
 def home():
     global anim_proc
