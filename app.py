@@ -22,10 +22,10 @@ LED_ARGS = " ".join(
         "--led-cols=32",
         "--led-parallel=1",
         "--led-gpio-mapping=adafruit-hat",
-        "--led-brightness=80",
+        "--led-brightness=75",
         "--led-pwm-bits=5",
         "--led-no-hardware-pulse",
-        "--led-slowdown-gpio=3",
+        "--led-slowdown-gpio=4",
     ]
 )
 
