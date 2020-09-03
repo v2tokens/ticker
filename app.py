@@ -41,7 +41,7 @@ ANIM_CMD = split(f"{LED_CMD} {LED_ARGS} -f -s {ANIM_IMGS}")
 
 
 GOAL_IMG = "../../gifs/Goal_Reached.gif"
-GOAL_CMD = split(f"{LED_CMD} {LED_ARGS} -t 20 {GOAL_IMG}")
+GOAL_CMD = split(f"{LED_CMD} {LED_ARGS} -t 18 {GOAL_IMG}")
 
 
 def kill_process(process):
