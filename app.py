@@ -31,15 +31,16 @@ LED_ARGS = " ".join(
 
 ANIM_IMGS = " ".join(
     [
-        "../../gifs/bongacams_scroller_1.gif",
+        "../../gifs/alexa_ranking.gif",
         "../../gifs/bongacams_scroller_2.gif",
-        "../../gifs/chaturbate_01.gif",
+        "../../gifs/Chaturbate_visitors.gif",
+        "../../gifs/LiveJasmin_worth.gif",
     ]
 )
 ANIM_CMD = split(f"{LED_CMD} {LED_ARGS} -f -s {ANIM_IMGS}")
 
 
-GOAL_IMG = "../../gifs/Goal_reached.gif"
+GOAL_IMG = "../../gifs/Goal_Reached.gif"
 GOAL_CMD = split(f"{LED_CMD} {LED_ARGS} -t 20 {GOAL_IMG}")
 
 
